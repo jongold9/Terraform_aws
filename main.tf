@@ -54,6 +54,11 @@ resource "aws_instance" "ubuntu" {
   }
 }
 
+# Monitoring Импортируем файл с мониторингом и алертами
+terraform {
+  source = "./monitoring.tf"
+}
+
 output "public_ips" {value = aws_instance.ubuntu[*].public_ip}
 
 output "ssh_commands" {value = [for ip in aws_instance.ubuntu[*].public_ip : "ssh -i 'terraform-key.pem' ubuntu@ec3-${replace(ip, ".", "-")}.eu-central-1.compute.amazonaws.com"]}

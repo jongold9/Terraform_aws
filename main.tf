@@ -9,7 +9,7 @@ resource "aws_security_group" "ubuntu_sg" {
   description = "Allow various incoming traffic"
 
   dynamic "ingress" {
-    for_each = [80, 33, 443, 10050, 51830, 3306, 8000, 8080, 9090, 9091, 9093, 3000, 9100]
+    for_each = [80, 22, 443, 10050, 51830, 3306, 8000, 8080, 9090, 9091, 9093, 3000, 9100]
     content {
       from_port   = ingress.value
       to_port     = ingress.value
@@ -54,14 +54,10 @@ resource "aws_instance" "ubuntu" {
   }
 }
 
-# Monitoring Импортируем файл с мониторингом и алертами
-terraform {
-  source = "./monitoring.tf"
-}
 
 output "public_ips" {value = aws_instance.ubuntu[*].public_ip}
 
-output "ssh_commands" {value = [for ip in aws_instance.ubuntu[*].public_ip : "ssh -i 'terraform-key.pem' ubuntu@ec3-${replace(ip, ".", "-")}.eu-central-1.compute.amazonaws.com"]}
+output "ssh_commands" {value = [for ip in aws_instance.ubuntu[*].public_ip : "ssh -i 'terraform-key.pem' ubuntu@ec2-${replace(ip, ".", "-")}.eu-central-1.compute.amazonaws.com"]}
 
 #terraform apply -auto-approve
 #terraform destroy -auto-approve
